@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cutroom: a pro video editor in your pocket</title>
+<meta name="description" content="Cutroom is a powerful video editor for iPhone: transitions, filters, Ken Burns motion, animated text, voiceover, auto captions. One purchase, no watermark, no subscription.">
+<style>
+:root{--bg:#0A0D17;--ink:#F4F6FB;--mut:rgba(244,246,251,.64);--line:rgba(255,255,255,.12);--card:rgba(255,255,255,.055);--a:#5B8CFF;--b:#9B6BFF;--hot:#FF5C7A;--c:#35E0C2;--f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",Segoe UI,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(900px 520px at 12% -10%,rgba(91,140,255,.32),transparent 60%),radial-gradient(800px 520px at 92% 8%,rgba(155,107,255,.26),transparent 60%),var(--bg)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(10,13,23,.7);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:58px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:-.3px}
+.logo i{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#1B2150,#0B0E17);border:1px solid var(--line);position:relative}
+.logo i::after{content:"";position:absolute;left:12px;top:5px;width:3px;height:18px;border-radius:2px;background:var(--hot)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;border-radius:999px;padding:13px 24px;font-size:15px;border:0;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 10px 30px rgba(91,140,255,.35);text-decoration:none;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.g{background:var(--card);border:1px solid var(--line);box-shadow:none}
+.hero{padding:64px 0 20px;text-align:center}
+.tag{display:inline-block;font-size:13px;font-weight:700;color:var(--c);border:1px solid rgba(53,224,194,.4);background:rgba(53,224,194,.1);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+h1{font-size:clamp(38px,6.6vw,72px);line-height:1.03;letter-spacing:-2.2px;font-weight:880;max-width:860px;margin:0 auto}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--a),var(--b) 50%,var(--hot));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(17px,2.1vw,21px);color:var(--mut);max-width:620px;margin:20px auto 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.fine{color:var(--mut);font-size:13px;margin-top:14px}
+/* interactive studio */
+.studio{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:28px;align-items:center;margin:48px auto 0;max-width:900px;text-align:left}
+@media(max-width:760px){.studio{grid-template-columns:1fr}}
+.phone{position:relative;width:100%;max-width:330px;margin:0 auto;aspect-ratio:9/19.2;border-radius:46px;background:#000;padding:10px;box-shadow:0 0 0 2px #2a2f45,0 40px 100px rgba(0,0,0,.6),0 0 90px rgba(91,140,255,.25)}
+.screen{position:relative;width:100%;height:100%;border-radius:38px;overflow:hidden;background:#0A0D17;display:flex;flex-direction:column}
+.screen .top{height:46px;display:flex;align-items:center;justify-content:flex-end;padding:0 12px;gap:8px;margin-top:20px}
+.pill{font-size:11px;font-weight:700;padding:6px 12px;border-radius:99px;background:#171B2C}.pill.ex{background:linear-gradient(135deg,var(--a),var(--b))}
+.cv{flex:1;display:grid;place-items:center;padding:4px 14px 0;min-height:0}
+canvas{height:100%;max-width:100%;aspect-ratio:9/16;border-radius:6px;background:#000}
+.tl{height:104px;padding:8px 12px 4px;position:relative;user-select:none;touch-action:none}
+.tl .rowv{height:40px;border-radius:7px;overflow:hidden;position:relative;display:flex;margin-top:4px}
+.tl .seg{height:100%;position:relative}
+.tl .seg span{position:absolute;left:5px;bottom:2px;font-size:9px;font-weight:700;text-shadow:0 1px 3px #0008}
+.tl .rowt{height:20px;margin-top:5px;border-radius:5px;background:#9B6BFF;font-size:9px;font-weight:700;padding:3px 7px;white-space:nowrap}
+.head{position:absolute;top:2px;bottom:6px;width:2px;background:#fff;box-shadow:0 0 8px #fff8;left:12px;pointer-events:none}
+.head::before{content:"";position:absolute;left:-4px;top:-3px;width:10px;height:10px;border-radius:50%;background:#fff}
+.tb{display:flex;gap:2px;padding:6px 8px 14px;justify-content:space-around}
+.tb b{display:grid;place-items:center;font-size:9px;font-weight:600;opacity:.8;gap:2px}
+.tb b i{font-style:normal;font-size:17px}
+.ctl h3{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:0 0 10px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 14px var(--f);padding:9px 15px;border-radius:99px;cursor:pointer;transition:.15s}
+.chip:hover{background:rgba(255,255,255,.1)}.chip.on{background:linear-gradient(135deg,var(--a),var(--b));border-color:transparent}
+.play{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.play button{width:52px;height:52px;border-radius:50%;border:0;background:#fff;color:#000;font-size:20px;cursor:pointer}
+.hint{color:var(--mut);font-size:13px}
+section{padding:70px 0}
+h2{font-size:clamp(28px,4.4vw,44px);font-weight:860;letter-spacing:-1.2px;text-align:center}
+.sub{color:var(--mut);text-align:center;max-width:580px;margin:12px auto 38px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.28)}
+.card .ic{font-size:28px;margin-bottom:10px}.card h3{font-size:18px;font-weight:800;margin-bottom:6px}.card p{color:var(--mut);font-size:15px}
+.gifs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;justify-items:center}
+.gifs figure{text-align:center}.gifs img{width:100%;max-width:240px;border-radius:26px;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.gifs figcaption{margin-top:10px;font-weight:700;font-size:14px;color:var(--mut)}
+.price{max-width:460px;margin:0 auto;text-align:center;padding:38px 28px;background:linear-gradient(160deg,rgba(91,140,255,.22),rgba(155,107,255,.14));border:1px solid var(--line);border-radius:24px}
+.price .n{font-size:64px;font-weight:880;letter-spacing:-2px}.price .n small{font-size:16px;font-weight:600;color:var(--mut);letter-spacing:0}
+.price ul{list-style:none;text-align:left;margin:20px 0 24px;display:grid;gap:8px;color:var(--mut);font-size:15px}.price li::before{content:"✓ ";color:var(--c);font-weight:800}
+footer{text-align:center;padding:40px 20px 56px;color:var(--mut);font-size:13px}
+.reveal{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.7,.2,1)}.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style></head><body>
+<div class="glow"></div>
+<nav><div class="wrap"><a class="logo" href="#"><i></i>Cutroom</a><a class="btn" style="padding:9px 18px;font-size:14px" href="#get">Get the app</a></div></nav>
+
+<header class="hero"><div class="wrap">
+  <span class="tag">Video editor for iPhone</span>
+  <h1>A pro video editor in <em>your pocket</em></h1>
+  <p class="lead">Cut, transition, grade, caption and export in 4K. Everything you expect from a desktop editor, built for your thumb. One purchase. No subscription. No watermark.</p>
+  <div class="cta"><a class="btn" href="#get">$0.99 on the App Store</a><a class="btn g" href="#studio">Try it right here</a></div>
+  <p class="fine">Scrub the timeline and play with the controls. This demo runs live in your browser.</p>
+
+  <div class="studio" id="studio">
+    <div class="phone"><div class="screen">
+      <div class="top"><span class="pill">Auto</span><span class="pill ex">Export</span></div>
+      <div class="cv"><canvas id="cv" width="360" height="640"></canvas></div>
+      <div class="tl" id="tl">
+        <div class="rowv" id="rowv"></div>
+        <div class="rowt" id="rowt">Aa  Summer in the hills</div>
+        <div class="head" id="head"></div>
+      </div>
+      <div class="tb"><b><i>＋</i>Media</b><b><i>✦</i>Style</b><b><i>✂︎</i>Split</b><b><i>Aa</i>Text</b><b><i>♪</i>Music</b></div>
+    </div></div>
+    <div class="ctl">
+      <div class="play"><button id="pp" aria-label="Play">▶</button><div><div id="tm" style="font:600 15px ui-monospace,Menlo,monospace">0:00.0 / 0:10.0</div><div class="hint">Drag the timeline to scrub</div></div></div>
+      <h3>Transition</h3><div class="chips" id="trs"></div>
+      <h3>Filter</h3><div class="chips" id="fls"></div>
+      <h3>Text animation</h3><div class="chips" id="txs"></div>
+    </div>
+  </div>
+</div></header>
+
+<section><div class="wrap reveal">
+  <h2>See it move</h2><p class="sub">Real recordings from the app.</p>
+  <div class="gifs">
+    <figure><img src="gifs/tour.gif" alt="Cutroom editing tour" loading="lazy"><figcaption>Edit, grade, finish</figcaption></figure>
+    <figure><img src="gifs/filters.gif" alt="Filters" loading="lazy"><figcaption>Filters in real time</figcaption></figure>
+    <figure><img src="gifs/transitions.gif" alt="Transitions" loading="lazy"><figcaption>Seven transitions</figcaption></figure>
+    <figure><img src="gifs/styles.gif" alt="One tap styles" loading="lazy"><figcaption>One-tap styles</figcaption></figure>
+  </div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <h2>Everything a real editor has</h2><p class="sub">Not a toy. A fast, GPU-powered timeline editor.</p>
+  <div class="grid">
+    <div class="card"><div class="ic">🎞️</div><h3>Multi-clip timeline</h3><p>Split, trim, reorder, duplicate and mix videos and photos. Pinch to zoom, scrub with haptics.</p></div>
+    <div class="card"><div class="ic">✨</div><h3>7 transitions</h3><p>Fade, slide, push, zoom, wipe, blur and flash. Adjust the duration to the frame.</p></div>
+    <div class="card"><div class="ic">🎨</div><h3>Filters and grading</h3><p>12 looks plus brightness, contrast, saturation and warmth, all live while you play.</p></div>
+    <div class="card"><div class="ic">🎥</div><h3>Ken Burns motion</h3><p>Animated zoom and pan on any clip or photo. Make still images feel alive.</p></div>
+    <div class="card"><div class="ic">🅰️</div><h3>Animated text</h3><p>Five fonts, outlines, boxes, pop, rise and fade. Drag it exactly where you want it.</p></div>
+    <div class="card"><div class="ic">💬</div><h3>Auto captions</h3><p>Speech to captions on your device, with timing. Edit any line afterwards.</p></div>
+    <div class="card"><div class="ic">🎙️</div><h3>Voiceover and music</h3><p>Record narration over the video and add your own music with automatic fade-out.</p></div>
+    <div class="card"><div class="ic">❄️</div><h3>Freeze frame and speed</h3><p>Hold any moment, or go from 0.25× slow motion to 4× fast, with pitch kept natural.</p></div>
+    <div class="card"><div class="ic">📐</div><h3>Every canvas</h3><p>9:16, 16:9, 1:1 and 4:5 with Fill or blurred Fit, ready for any platform.</p></div>
+    <div class="card"><div class="ic">🪄</div><h3>One-tap styles</h3><p>Cinematic, Vlog, Retro, Dream, Mono and Pop restyle your whole edit in a tap.</p></div>
+    <div class="card"><div class="ic">↩︎</div><h3>Unlimited undo</h3><p>Try anything. Undo and redo every edit.</p></div>
+    <div class="card"><div class="ic">🔒</div><h3>Private and offline</h3><p>Edits stay on your iPhone. No account, no upload, no tracking.</p></div>
+  </div>
+</div></section>
+
+<section id="get"><div class="wrap reveal">
+  <h2>One price. Keep it forever.</h2><p class="sub">No subscription, no watermark, no ads.</p>
+  <div class="price"><div class="n">$0.99 <small>one time</small></div>
+    <ul><li>Every feature unlocked</li><li>Export up to 4K, no watermark</li><li>No subscription, no account</li><li>Works offline</li></ul>
+    <a class="btn" href="#">Download on the App Store</a></div>
+</div></section>
+<footer>© 2026 Cutroom</footer>
+
+<script>
+const W=360,H=640,cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const scenes=[
+ {n:'Sunrise',c:['#ff9e66','#59339a'],v:0,d:3.5},{n:'Forest',c:['#80d9e6','#267373'],v:1,d:3.5},
+ {n:'City',c:['#1a1a4d','#9940b3'],v:2,d:3.5},{n:'Snow',c:['#ccE6ff','#7399e6'],v:3,d:3.5}];
+const OV=0.8; let starts=[],total=0;scenes.forEach((s,i)=>{s.s=i?starts[i-1]+scenes[i-1].d-OV:0;starts.push(s.s);total=s.s+s.d});
+let TR='slide',FL='none',TX='pop',t=0,playing=false,last=0;
+const filters={none:'none',vivid:'saturate(1.5) contrast(1.1)',noir:'grayscale(1) contrast(1.15)',warm:'sepia(.35) saturate(1.2) hue-rotate(-10deg)',cool:'hue-rotate(15deg) saturate(1.1) brightness(1.02)',chrome:'contrast(1.2) saturate(1.3) sepia(.12)',fade:'contrast(.85) brightness(1.1) saturate(.8)'};
+function scene(c,s,lt){ // draw scene s at local time lt into context c
+ const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,s.c[0]);g.addColorStop(1,s.c[1]);c.fillStyle=g;c.fillRect(0,0,W,H);
+ const p=lt/s.d;c.fillStyle='rgba(255,255,255,.95)';const sx=70+p*160,sy=H*(s.v==0?0.45+p*0.04:0.34);c.beginPath();c.arc(sx,sy,40,0,7);c.fill();
+ [[.3,30,.4,.18],[.24,44,.8,.28],[.16,58,1.4,.42]].forEach(([h,a,sp,al])=>{c.fillStyle=`rgba(0,0,0,${al})`;c.beginPath();c.moveTo(0,H);for(let x=0;x<=W+8;x+=8)c.lineTo(x,H*(1-h)+Math.sin(x/75+p*6*sp+s.v)*a*.6);c.lineTo(W,H);c.fill()});
+ if(s.v==2){c.fillStyle='rgba(255,230,80,.85)';for(let i=0;i<24;i++){if((i+Math.floor(lt*3))%3)c.fillRect((i*97)%330+14,H*.1+(i*53)%170,7,10)}}
+ if(s.v==3){c.fillStyle='#fff';for(let i=0;i<40;i++){c.fillRect((i*173)%360,((H-(i*311)%H)+lt*260*(1+(i%3)*.4))%H,4,4)}}
+ c.fillStyle='rgba(255,255,255,.95)';c.font='800 50px -apple-system,system-ui,sans-serif';c.fillText(s.n,24,H-70);
+}
+const buf=[document.createElement('canvas'),document.createElement('canvas')];buf.forEach(b=>{b.width=W;b.height=H});
+function ease(x){return x*x*(3-2*x)}
+function frame(){
+ let a=null,b=null;
+ scenes.forEach((s,i)=>{if(t>=s.s&&t<s.s+s.d){if(!a)a=i;else b=i}});
+ if(a===null)a=scenes.length-1;
+ const bc=buf.map(b=>b.getContext('2d'));
+ scene(bc[0],scenes[a],t-scenes[a].s);
+ ctx.save();ctx.filter=filters[FL];ctx.globalAlpha=1;
+ if(b!==null){
+  scene(bc[1],scenes[b],t-scenes[b].s);const p=ease((t-scenes[b].s)/OV);
+  ctx.drawImage(buf[0],0,0);
+  if(TR==='fade'){ctx.globalAlpha=p;ctx.drawImage(buf[1],0,0)}
+  else if(TR==='slide'){ctx.drawImage(buf[1],(1-p)*W,0)}
+  else if(TR==='push'){ctx.clearRect(0,0,W,H);ctx.drawImage(buf[0],-p*W,0);ctx.drawImage(buf[1],(1-p)*W,0)}
+  else if(TR==='zoom'){ctx.clearRect(0,0,W,H);const s0=1+.5*p;ctx.save();ctx.translate(W/2,H/2);ctx.scale(s0,s0);ctx.translate(-W/2,-H/2);ctx.drawImage(buf[0],0,0);ctx.restore();ctx.globalAlpha=p;const s1=1.35-.35*p;ctx.translate(W/2,H/2);ctx.scale(s1,s1);ctx.translate(-W/2,-H/2);ctx.drawImage(buf[1],0,0)}
+  else if(TR==='wipe'){ctx.save();ctx.beginPath();ctx.rect(0,0,W*p,H);ctx.clip();ctx.drawImage(buf[1],0,0);ctx.restore()}
+  else if(TR==='blur'){ctx.clearRect(0,0,W,H);const r=8*Math.sin(Math.PI*p);ctx.filter=(FL==='none'?'':filters[FL]+' ')+`blur(${r}px)`;ctx.drawImage(buf[0],0,0);ctx.globalAlpha=p;ctx.drawImage(buf[1],0,0)}
+  else if(TR==='flash'){ctx.clearRect(0,0,W,H);ctx.drawImage(p<.5?buf[0]:buf[1],0,0);ctx.filter='none';ctx.globalAlpha=1-Math.abs(2*p-1);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H)}
+ } else ctx.drawImage(buf[0],0,0);
+ ctx.restore();
+ // text
+ const ts=.4,te=3.2;if(t>=ts&&t<=te){const a=Math.min(1,(t-ts)/.3),fade=Math.max(0,Math.min(1,(t-ts)/.2,(te-t)/.2));
+  ctx.save();ctx.globalAlpha=TX==='none'?1:fade;ctx.textAlign='center';ctx.font='800 32px -apple-system,system-ui,sans-serif';ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=8;ctx.fillStyle='#fff';
+  let sc=1,dy=0;if(TX==='pop'){const k=1+2.2*Math.pow(a-1,3)+1.2*Math.pow(a-1,2);sc=.4+.6*k}if(TX==='rise'){dy=(1-(1-Math.pow(1-a,3)))*H*.05}
+  ctx.translate(W/2,H*.3+dy);ctx.scale(sc,sc);ctx.fillText('Summer in',0,0);ctx.fillText('the hills',0,38);ctx.restore()}
+ document.getElementById('head').style.left=(12+(document.getElementById('tl').clientWidth-24)*t/total-1)+'px';
+ document.getElementById('tm').textContent=fmt(t)+' / '+fmt(total);
+}
+const fmt=x=>'0:'+(x<10?'0':'')+x.toFixed(1);
+function tick(ts){if(playing){const dt=(ts-last)/1000;t+=dt;if(t>=total){t=0}}last=ts;frame();requestAnimationFrame(tick)}
+requestAnimationFrame(tick);
+const pp=document.getElementById('pp');pp.onclick=()=>{playing=!playing;pp.textContent=playing?'❚❚':'▶'};
+// timeline
+const rowv=document.getElementById('rowv'),tl=document.getElementById('tl');
+scenes.forEach((s,i)=>{const d=document.createElement('div');d.className='seg';d.style.width=(s.d-(i?OV:0))/ (total) *100+'%';d.style.background=`linear-gradient(135deg,${s.c[0]},${s.c[1]})`;d.innerHTML='<span>'+s.n+'</span>';rowv.appendChild(d)});
+document.getElementById('rowt').style.width=(2.8/total*100)+'%';document.getElementById('rowt').style.marginLeft=(.4/total*100)+'%';
+function scrub(e){const r=rowv.getBoundingClientRect();const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;t=Math.max(0,Math.min(total-.01,x/r.width*total));playing=false;pp.textContent='▶'}
+let drag=false;tl.addEventListener('pointerdown',e=>{drag=true;tl.setPointerCapture(e.pointerId);scrub(e)});tl.addEventListener('pointermove',e=>{if(drag)scrub(e)});tl.addEventListener('pointerup',()=>drag=false);
+function chips(id,list,get,set,map){const el=document.getElementById(id);list.forEach(k=>{const b=document.createElement('button');b.className='chip'+(k===get()?' on':'');b.textContent=k[0].toUpperCase()+k.slice(1);b.onclick=()=>{set(k);[...el.children].forEach(c=>c.classList.toggle('on',c===b));if(id==='trs'){t=Math.max(0,starts[1]-.25);playing=true;pp.textContent='❚❚'}if(id==='txs'){t=.2;playing=true;pp.textContent='❚❚'}};el.appendChild(b)})}
+chips('trs',['fade','slide','push','zoom','wipe','blur','flash'],()=>TR,k=>TR=k);
+chips('fls',Object.keys(filters),()=>FL,k=>FL=k);
+chips('txs',['none','fade','pop','rise'],()=>TX,k=>TX=k);
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12}).observe&&document.querySelectorAll('.reveal').forEach(el=>{new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)el.classList.add('in')}),{threshold:.12}).observe(el)});
+</script></body></html>
